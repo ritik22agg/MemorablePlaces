@@ -8,10 +8,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    static ArrayList<String> list = new ArrayList<>();
+    static ArrayList<LatLng> location = new ArrayList<>();
+    static ArrayAdapter arrayAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,11 +24,12 @@ public class MainActivity extends AppCompatActivity {
 
         ListView listView = (ListView) findViewById(R.id.list);
 
-        ArrayList<String> list = new ArrayList<>();
+
         list.add("Add a  new Places....");
+        location.add(new LatLng(0,0));
 
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, list);
+        arrayAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, list);
         listView.setAdapter(arrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

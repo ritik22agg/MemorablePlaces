@@ -24,6 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void centerMapOnLocation(Location location, String title){
         LatLng userlocation = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.clear();
-        mMap.addMarker(new MarkerOptions().position(userlocation).title(title));
+        if(title != "Your Location") {
+            mMap.addMarker(new MarkerOptions().position(userlocation).title(title));
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userlocation, 10));
     }
 
@@ -109,27 +113,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }else{
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
             }
+        }else{
+            mMap.clear();
+            Location place = new Location(LocationManager.GPS_PROVIDER);
+            place.setLatitude(MainActivity.location.get(intent.getIntExtra("position", 0)).latitude);
+            place.setLongitude(MainActivity.location.get(intent.getIntExtra("position", 0)).longitude);
+            centerMapOnLocation(place,MainActivity.list.get(intent.getIntExtra("position", 0)) );
         }
 
-        /*
+
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                mMap.addMarker(new MarkerOptions().position(latLng).title("Marker U marked"));
-                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                String address = "";
                 try {
                     List<Address> listaddresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
 
                     if(listaddresses != null && listaddresses.size() > 0){
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("address", listaddresses.get(0).getAddressLine(0).toString());
+                        if(listaddresses.get(0).getThoroughfare() != null){
+                            if(listaddresses.get(0).getSubThoroughfare() != null){
+                                address += listaddresses.get(0).getSubThoroughfare() + " ";
+                            }
+                            address += listaddresses.get(0).getThoroughfare();
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                if(address == ""){
+                    SimpleDateFormat sdf = new SimpleDateFormat("mm:HH yyyyMMdd");
+                    address = sdf.format(new Date());
+                }
+                mMap.addMarker(new MarkerOptions().position(latLng).title(address));
+                MainActivity.list.add(address);
+                MainActivity.location.add(latLng);
+
+                MainActivity.arrayAdapter.notifyDataSetChanged();
             }
-        }); */
+        });
         // Add a marker in Sydney and move the camera
 
     }
