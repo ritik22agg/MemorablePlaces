@@ -1,5 +1,6 @@
 package com.example.memorableplaces;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.list);
 
         ArrayList<String> list = new ArrayList<>();
-        list.add("Add Places....");
-        list.add("Hello");
+        list.add("Add a  new Places....");
+
 
         ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, list);
         listView.setAdapter(arrayAdapter);
@@ -28,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 0){
-                    
-                }
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
             }
         });
     }
